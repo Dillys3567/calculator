@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
@@ -81,7 +81,7 @@ class _CalculatorState extends State<Calculator> {
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.normal,
-            color: Colors.white,
+            color: Theme.of(context).textTheme.bodyText1?.color,
           ),
         ),
       ),
@@ -92,6 +92,9 @@ class _CalculatorState extends State<Calculator> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        shadowColor: Colors.grey,
+        elevation: 15,
+        automaticallyImplyLeading: false,
         title: Text('Calculator'),
         actions: [
           Padding(
@@ -100,7 +103,13 @@ class _CalculatorState extends State<Calculator> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Icon(Icons.settings),
+            child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    Navigator.pushNamed(context, '/settings');
+                  });
+                },
+                child: Icon(Icons.settings)),
           ),
         ],
       ),
@@ -132,37 +141,37 @@ class _CalculatorState extends State<Calculator> {
                   children: [
                     TableRow(
                       children: [
-                        Button('C', 1, Colors.redAccent),
-                        Button('⌫', 1, Colors.blue),
-                        Button('÷', 1, Colors.blue),
+                        Button('C', 1, Theme.of(context).canvasColor),
+                        Button('⌫', 1, Theme.of(context).cardColor),
+                        Button('÷', 1, Theme.of(context).cardColor),
                       ],
                     ),
                     TableRow(
                       children: [
-                        Button('7', 1, Colors.grey),
-                        Button('8', 1, Colors.grey),
-                        Button('9', 1, Colors.grey),
+                        Button('7', 1, Theme.of(context).primaryColor),
+                        Button('8', 1, Theme.of(context).primaryColor),
+                        Button('9', 1, Theme.of(context).primaryColor),
                       ],
                     ),
                     TableRow(
                       children: [
-                        Button('4', 1, Colors.grey),
-                        Button('5', 1, Colors.grey),
-                        Button('6', 1, Colors.grey),
+                        Button('4', 1, Theme.of(context).primaryColor),
+                        Button('5', 1, Theme.of(context).primaryColor),
+                        Button('6', 1, Theme.of(context).primaryColor),
                       ],
                     ),
                     TableRow(
                       children: [
-                        Button('1', 1, Colors.grey),
-                        Button('2', 1, Colors.grey),
-                        Button('3', 1, Colors.grey),
+                        Button('1', 1, Theme.of(context).primaryColor),
+                        Button('2', 1, Theme.of(context).primaryColor),
+                        Button('3', 1, Theme.of(context).primaryColor),
                       ],
                     ),
                     TableRow(
                       children: [
-                        Button('.', 1, Colors.grey),
-                        Button('0', 1, Colors.grey),
-                        Button('00', 1, Colors.grey),
+                        Button('.', 1, Theme.of(context).primaryColor),
+                        Button('0', 1, Theme.of(context).primaryColor),
+                        Button('00', 1, Theme.of(context).primaryColor),
                       ],
                     )
                   ],
@@ -173,16 +182,16 @@ class _CalculatorState extends State<Calculator> {
                 child: Table(
                   children: [
                     TableRow(children: [
-                      Button('×', 1, Colors.blue),
+                      Button('×', 1, Theme.of(context).cardColor),
                     ]),
                     TableRow(children: [
-                      Button('-', 1, Colors.blue),
+                      Button('-', 1, Theme.of(context).cardColor),
                     ]),
                     TableRow(children: [
-                      Button('+', 1, Colors.blue),
+                      Button('+', 1, Theme.of(context).cardColor),
                     ]),
                     TableRow(children: [
-                      Button('=', 2, Colors.redAccent),
+                      Button('=', 2, Theme.of(context).canvasColor),
                     ]),
                   ],
                 ),
