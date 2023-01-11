@@ -1,9 +1,10 @@
 // ignore_for_file: prefer_const_constructors, unused_import
 
-import 'package:calculator/calculator.dart';
+import 'package:calculator/screens/scientific_calculator/scientific_calculator.dart';
+import 'package:calculator/screens/simple_calculator/calculator.dart';
 import 'package:calculator/utils/constants.dart';
-import 'package:calculator/settings.dart';
-import 'package:calculator/splash_screen.dart';
+import 'package:calculator/settings/settings.dart';
+import 'package:calculator/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'utils/dark_theme_provider.dart';
@@ -59,6 +60,7 @@ class _MyAppState extends State<MyApp> {
             '/home': (context) => Calculator(),
             '/settings': (context) => Settings(),
             '/splash': (context) => Splash(),
+            '/scientific': (context) => ScientificCalculator(),
           },
         );
       }),

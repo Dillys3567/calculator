@@ -1,16 +1,17 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, non_constant_identifier_names
 
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
 
-class Calculator extends StatefulWidget {
-  const Calculator({Key? key}) : super(key: key);
+class ScientificCalculator extends StatefulWidget {
+  const ScientificCalculator({Key? key}) : super(key: key);
 
   @override
-  State<Calculator> createState() => _CalculatorState();
+  State<ScientificCalculator> createState() => _ScientificCalculatorState();
 }
 
-class _CalculatorState extends State<Calculator> {
+class _ScientificCalculatorState extends State<ScientificCalculator> {
   String equation = "0";
   String result = "0";
   String expression = '';
@@ -39,6 +40,34 @@ class _CalculatorState extends State<Calculator> {
         expression = equation;
         expression = expression.replaceAll('÷', '/');
         expression = expression.replaceAll('×', '*');
+        expression = expression.replaceAll('x^', '^');
+        expression = expression.replaceAll('(', '*(');
+        expression = expression.replaceAll('π', pi.toString());
+        if (expression.contains('√') ||
+            expression.contains('log') ||
+            expression.contains('ln')) {
+          var index = expression.contains('√')
+              ? expression.indexOf('√')
+              : (expression.contains('log')
+                  ? expression.indexOf('log')
+                  : expression.indexOf('ln'));
+          var tempA = expression.substring(0, index);
+          print(tempA + " A");
+          //var tempB = expression.substring(index + 1, expression.length);
+          var tempB = expression.contains('√')
+              ? expression.substring(index + 1, expression.length)
+              : (expression.contains('log')
+                  ? expression.substring(index + 3, expression.length)
+                  : expression.substring(index + 2, expression.length));
+          print(tempB + " B");
+          var tempC = expression.contains('√')
+              ? sqrt(double.parse(tempB)).toString()
+              : (expression.contains('log')
+                  ? (log(double.parse(tempB)) / log(10)).toString()
+                  : log(double.parse(tempB)).toString());
+          expression = tempA + tempC;
+          print(expression);
+        }
         print(expression);
         try {
           Parser p = Parser();
@@ -46,6 +75,7 @@ class _CalculatorState extends State<Calculator> {
           ContextModel conMod = ContextModel();
           result = '${exp.evaluate(EvaluationType.REAL, conMod)}';
         } catch (e) {
+          print(e);
           result = 'Error';
         }
       } else {
@@ -67,19 +97,25 @@ class _CalculatorState extends State<Calculator> {
       height: MediaQuery.of(context).size.height * 0.1 * buttonHeight,
       color: buttonColor,
       child: TextButton(
-        onPressed: () => buttonPressed(buttonText),
+        onPressed: () {
+          buttonText = buttonText.contains('x')
+              ? buttonText.replaceAll('x', '')
+              : buttonText;
+          print(buttonText);
+          return buttonPressed(buttonText);
+        },
         style: TextButton.styleFrom(
           padding: const EdgeInsets.all(16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(0),
-            side: const BorderSide(
+            side: BorderSide(
                 color: Colors.white, width: 1, style: BorderStyle.solid),
           ),
         ),
         child: Text(
           buttonText,
           style: TextStyle(
-            fontSize: 30,
+            fontSize: 20,
             fontWeight: FontWeight.normal,
             color: Theme.of(context).textTheme.bodyText1?.color,
           ),
@@ -95,11 +131,17 @@ class _CalculatorState extends State<Calculator> {
         shadowColor: Colors.grey,
         elevation: 15,
         automaticallyImplyLeading: false,
-        title: Text('Calculator'),
+        title: Text('Scientific Calculator'),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Icon(Icons.science_outlined),
+            child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    Navigator.pushNamed(context, '/home');
+                  });
+                },
+                child: Icon(Icons.calculate_outlined)),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -121,6 +163,7 @@ class _CalculatorState extends State<Calculator> {
             child: Text(equation,
                 style: TextStyle(
                   fontSize: equationFontSize,
+                  color: Theme.of(context).textTheme.bodyText1?.color,
                 )),
           ),
           Container(
@@ -128,7 +171,10 @@ class _CalculatorState extends State<Calculator> {
             padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
             child: Text(
               result,
-              style: TextStyle(fontSize: resultFontSize),
+              style: TextStyle(
+                fontSize: resultFontSize,
+                color: Theme.of(context).textTheme.bodyText1?.color,
+              ),
             ),
           ),
           Expanded(child: Divider()),
@@ -136,21 +182,32 @@ class _CalculatorState extends State<Calculator> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                width: MediaQuery.of(context).size.width * 0.75,
+                width: MediaQuery.of(context).size.width,
                 child: Table(
                   children: [
                     TableRow(
                       children: [
-                        Button('C', 1, Theme.of(context).canvasColor),
+                        Button('log', 1, Theme.of(context).primaryColor),
+                        Button('ln', 1, Theme.of(context).primaryColor),
                         Button('⌫', 1, Theme.of(context).cardColor),
                         Button('÷', 1, Theme.of(context).cardColor),
+                        Button('C', 1, Theme.of(context).canvasColor),
                       ],
                     ),
+                    TableRow(children: [
+                      Button('sin', 1, Theme.of(context).primaryColor),
+                      Button('cos', 1, Theme.of(context).primaryColor),
+                      Button('tan', 1, Theme.of(context).primaryColor),
+                      Button('+', 1, Theme.of(context).cardColor),
+                      Button('-', 1, Theme.of(context).cardColor),
+                    ]),
                     TableRow(
                       children: [
                         Button('7', 1, Theme.of(context).primaryColor),
                         Button('8', 1, Theme.of(context).primaryColor),
                         Button('9', 1, Theme.of(context).primaryColor),
+                        Button('÷', 1, Theme.of(context).cardColor),
+                        Button('×', 1, Theme.of(context).cardColor),
                       ],
                     ),
                     TableRow(
@@ -158,6 +215,8 @@ class _CalculatorState extends State<Calculator> {
                         Button('4', 1, Theme.of(context).primaryColor),
                         Button('5', 1, Theme.of(context).primaryColor),
                         Button('6', 1, Theme.of(context).primaryColor),
+                        Button('(', 1, Theme.of(context).cardColor),
+                        Button(')', 1, Theme.of(context).cardColor),
                       ],
                     ),
                     TableRow(
@@ -165,6 +224,8 @@ class _CalculatorState extends State<Calculator> {
                         Button('1', 1, Theme.of(context).primaryColor),
                         Button('2', 1, Theme.of(context).primaryColor),
                         Button('3', 1, Theme.of(context).primaryColor),
+                        Button('√ ', 1, Theme.of(context).cardColor),
+                        Button('x^', 1, Theme.of(context).cardColor),
                       ],
                     ),
                     TableRow(
@@ -172,30 +233,13 @@ class _CalculatorState extends State<Calculator> {
                         Button('.', 1, Theme.of(context).primaryColor),
                         Button('0', 1, Theme.of(context).primaryColor),
                         Button('00', 1, Theme.of(context).primaryColor),
+                        Button('π', 1, Theme.of(context).cardColor),
+                        Button('=', 1, Theme.of(context).canvasColor),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.25,
-                child: Table(
-                  children: [
-                    TableRow(children: [
-                      Button('×', 1, Theme.of(context).cardColor),
-                    ]),
-                    TableRow(children: [
-                      Button('-', 1, Theme.of(context).cardColor),
-                    ]),
-                    TableRow(children: [
-                      Button('+', 1, Theme.of(context).cardColor),
-                    ]),
-                    TableRow(children: [
-                      Button('=', 2, Theme.of(context).canvasColor),
-                    ]),
-                  ],
-                ),
-              )
             ],
           )
         ],
